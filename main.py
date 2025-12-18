@@ -168,7 +168,6 @@ def compute_fft_spectrum(signal_data, fs):
 # Calcular FFT dos três sinais
 freqs_orig, fft_orig = compute_fft_spectrum(signal_original, SAMPLING_FREQUENCY)
 freqs_fir, fft_fir = compute_fft_spectrum(signal_fir, SAMPLING_FREQUENCY)
-freqs_iir, fft_iir = compute_fft_spectrum(signal_iir, SAMPLING_FREQUENCY)
 
 # Calcular atenuação real em frequências específicas
 test_frequencies = [50, 200, 400, 500, 700, 1000]
@@ -184,27 +183,16 @@ for freq_test in test_frequencies:
     
     mag_orig = fft_orig[idx]
     mag_fir = fft_fir[idx]
-    mag_iir = fft_iir[idx]
     
     # Atenuação = quanto diminuiu em relação ao original
     atten_fir = mag_fir - mag_orig
-    atten_iir = mag_iir - mag_orig
-    
-    print(f"{freq_test:<12.0f} {mag_orig:<15.2f} {mag_fir:<15.2f} {mag_iir:<15.2f}")
-    print(f"{'':>12} {'':>15} (Δ {atten_fir:+.1f} dB)  (Δ {atten_iir:+.1f} dB)")
+    print(f"{freq_test:<12} {mag_orig:<15.2f} {mag_fir:<15.2f} {atten_fir:<15.2f}")
 
 
 
 while True:
     # 1. Aquisição de Sinal (Leitura do ADC)
     raw_value = adc_pin.read_u16() # Valor entre 0 e 65535
-    
-    # 2. Programar o Filtro Digital
-    filtered_value = apply_moving_average(raw_value)
-    
-    # 3. Envio dos dados para o PC (Porta Serial)
-    # Enviamos apenas o valor filtrado, seguido por uma quebra de linha
-    # O computador precisará converter essa string para um número.
-    print(str(filtered_value)) 
+
     
     time.sleep_ms(50) # Taxa de amostragem de ~20Hz
