@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final"
+		},
+		{
+			"name": "ecg_project",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"python.languageServer": "Pylance",
+		"python.analysis.diagnosticSeverityOverrides": {
+			"reportMissingModuleSource": "none",
+			"reportShadowedImports": "none"
+		},
+		"circuitpython.board.version": null
+	}
+}
