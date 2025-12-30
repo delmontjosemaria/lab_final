@@ -26,11 +26,8 @@ const int numTaps = 51;
 ring_t * historyBuffer = newRing(numTaps);
 float fftBuffer[MAX_FFT_BUF_SIZE];
 int fftBufferIdx = 0;
-float filteredSample;
-float rawSample;
 float bpm;
-kiss_fftr_cfg cfg;
-kiss_fft_cpx fftOut[MAX_FFT_BUF_SIZE/2 + 1];;
+kiss_fft_cpx fftOut[MAX_FFT_BUF_SIZE/2 + 1];
 float fftIn[MAX_FFT_BUF_SIZE];
 float winFunc[MAX_FFT_BUF_SIZE];
 
@@ -58,6 +55,7 @@ void resetActivity(){
 
 void core1_entry(){
   uint16_t rawSample;
+  float filteredSample;
 
   while(true){
     queue_remove_blocking(&sampleQueue, &rawSample);
@@ -103,7 +101,7 @@ void setupFFTResources(){
 
 float bpmFunc(float * rawBuffer){
   float bpm;
-  cfg = kiss_fftr_alloc(MAX_FFT_BUF_SIZE, 0, NULL, NULL);
+  kiss_fftr_cfg cfg = kiss_fftr_alloc(MAX_FFT_BUF_SIZE, 0, NULL, NULL);
 
   float sum = 0;
   for (int i = 0; i < MAX_FFT_BUF_SIZE; i++)
