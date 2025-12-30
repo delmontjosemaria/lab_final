@@ -41,6 +41,10 @@ bool isRingFull(ring_t * ring){
     return ring->size >= ring->capacity;
 }
 
+bool isRingEmpty(ring_t * ring){
+    return ring->size == 0;
+}
+
 void ringPrint(const ring_t * ring){
     if (ring == NULL)
         return; 

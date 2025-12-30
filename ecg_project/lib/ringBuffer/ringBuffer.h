@@ -18,4 +18,5 @@ uint16_t ringPop(ring_t * ring);
 void ringPrint(const ring_t * ring);
 size_t ringOffload(ring_t * ring, void *dest, size_t n);
 bool isRingFull(ring_t * ring);
+bool isRingEmpty(ring_t * ring);
 void endRing(ring_t * ring);
