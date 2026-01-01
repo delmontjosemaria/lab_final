@@ -1,13 +1,12 @@
 #include <Arduino.h>
 #include <ringBuffer.h>
-#include "kiss_fftr.h"
+#include <kiss_fftr.h>
 #include <multicore.h>
-#include "pico/util/queue.h"
+#include <queue.h>
 #include <math.h>
 #include <time.h>
 #include <timer.h>
 #include <mosquitto.h>
-#include <Wifi.h>
 
 const uint32_t fast_acq_us = 4000;
 const uint32_t sleep_acq_us = 1000000;
