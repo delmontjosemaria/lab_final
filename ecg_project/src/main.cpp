@@ -6,30 +6,55 @@
 #include <math.h>
 #include <time.h>
 #include <timer.h>
+#include <mosquitto.h>
 #include <Wifi.h>
 
-#define ADC_THRESHOLD_HIGH 2098 //ajustavel
-#define FAST_ACQ_US 4000
-#define SLEEP_ACQ_US 1000000
-#define MAX_TIMESAMPLE_BUF_SIZE 1000
-#define MAX_FFT_BUF_SIZE 1024
-#define IDLE_TIMEOUT 30000
+const uint32_t fast_acq_us = 4000;
+const uint32_t sleep_acq_us = 1000000;
+const uint16_t idle_timeout_ms = 30000;
+const int numTaps = 51;
+const int adc_threshold_high = 2098; //ajustável
+const int max_timesample_buf_size = 1000;
+const int max_fft_buf_size = 1024;
 
 #define ADC_PIN 26
+
+/*
+MQTT Broker subscription ID:
+-> ems/t10/g10
+Chosen bucket:
+-> ecg_measurement
+Chosen measurement
+-> heart_rate
+Chosen tags: 
+-> samplingRate, source, devs
+Chosen fields:
+-> BPM
+Syntax:
+-> mosquitto_pub -t "ems/t10/g10" -m "vitals,samplingRate=250,source=pico2w,devs:delpinho bpm=x" (publicar uma mensagem para um broker)
+-> mosquitto_sub -t "ems/t10/g10" (subscrever para um broker)
+*/
+
+typedef struct hBuffer{
+    size_t capacity;
+    size_t size;
+    int head;
+    int tail;
+    uint16_t buffer[max_fft_buf_size];
+} hBuffer;
 
 enum State {IDLE, ACTIVE};
 volatile State systemState = IDLE;
 volatile uint32_t lastActivityTime = 0;
 queue_t sampleQueue;
+hBuffer historyBuffer;
 
-const int numTaps = 51;
-ring_t * historyBuffer = newRing(numTaps);
-float fftBuffer[MAX_FFT_BUF_SIZE];
+float fftBuffer[max_fft_buf_size];
 int fftBufferIdx = 0;
 float bpm;
-kiss_fft_cpx fftOut[MAX_FFT_BUF_SIZE/2 + 1];
-float fftIn[MAX_FFT_BUF_SIZE];
-float winFunc[MAX_FFT_BUF_SIZE];
+kiss_fft_cpx fftOut[max_fft_buf_size/2 + 1];
+float fftIn[max_fft_buf_size];
+float winFunc[max_fft_buf_size];
 
 //Filtro FIR Notch em 50Hz e LowPass em 100Hz. A partir de 125 haveria aliasing, ja
 //que a frequencia de amostragem do sinal e de 250Hz. 
@@ -63,7 +88,7 @@ void core1_entry(){
       filteredSample = applyFilter(rawSample);
       //envia a amostra para o pc por serial
       fftBuffer[fftBufferIdx++] = filteredSample;
-      if (fftBufferIdx >= MAX_FFT_BUF_SIZE){
+      if (fftBufferIdx >= max_fft_buf_size){
         //calcula a fft e guarda em fft
         bpm = bpmFunc(fftBuffer);
         //mqtt_publish(vitalsData/bpm, bpm);
@@ -71,7 +96,7 @@ void core1_entry(){
       }
     }
     else {
-      if (rawSample > ADC_THRESHOLD_HIGH){
+      if (rawSample > adc_threshold_high){
         systemState = ACTIVE;
         resetActivity();
       }
@@ -83,11 +108,11 @@ float applyFilter(float newSample){
   float output = 0;
   int historyBufferIdx = 0;
   
-  ringPush(historyBuffer, newSample);
+  circularWrite(newSample);
 
   for (int i = 0; i < numTaps; i++){
     historyBufferIdx = (historyBufferIdx - i + numTaps) % numTaps;
-    output += filterCoefs[i] * historyBuffer->buffer[historyBufferIdx];
+    output += filterCoefs[i] * historyBuffer.buffer[historyBufferIdx];
   }
 
   return output;
@@ -95,20 +120,41 @@ float applyFilter(float newSample){
 
 void setupFFTResources(){
   //hann Window
-  for (int i = 0; i < MAX_FFT_BUF_SIZE; i++)
-    winFunc[i] = 0.5 * (1 - cos(2 * M_PI * i / (MAX_FFT_BUF_SIZE - 1)));
+  for (int i = 0; i < max_fft_buf_size; i++)
+    winFunc[i] = 0.5 * (1 - cos(2 * M_PI * i / (max_fft_buf_size - 1)));
+}
+
+void setupHistoryBuffer(){
+  for (uint16_t pos : historyBuffer.buffer)
+   pos = 0;
+  historyBuffer.capacity = max_fft_buf_size;
+  historyBuffer.size = 0;
+  historyBuffer.head = 0;
+  historyBuffer.tail = 0;
+}
+
+void circularWrite(uint16_t value){
+  if(historyBuffer.tail == historyBuffer.head && historyBuffer.size == historyBuffer.capacity)
+        historyBuffer.head = ++historyBuffer.head % historyBuffer.capacity;
+        //size does not reduce! once it's full, it's forever full
+
+    historyBuffer.buffer[historyBuffer.tail] = value;
+    historyBuffer.tail = ++historyBuffer.tail % historyBuffer.capacity;
+
+    if (historyBuffer.size < historyBuffer.capacity)
+        historyBuffer.size++;
 }
 
 float bpmFunc(float * rawBuffer){
   float bpm;
-  kiss_fftr_cfg cfg = kiss_fftr_alloc(MAX_FFT_BUF_SIZE, 0, NULL, NULL);
+  kiss_fftr_cfg cfg = kiss_fftr_alloc(max_fft_buf_size, 0, NULL, NULL);
 
   float sum = 0;
-  for (int i = 0; i < MAX_FFT_BUF_SIZE; i++)
+  for (int i = 0; i < max_fft_buf_size; i++)
     sum += rawBuffer[i];
 
-  float mean = sum / MAX_FFT_BUF_SIZE;
-  for (int i = 0; i < MAX_FFT_BUF_SIZE; i++) {
+  float mean = sum / max_fft_buf_size;
+  for (int i = 0; i < max_fft_buf_size; i++) {
       // (Sinal - Média) * Janela
       fftIn[i] = (rawBuffer[i] - mean) * winFunc[i];
   }
@@ -119,7 +165,7 @@ float bpmFunc(float * rawBuffer){
     // Precisamos definir os limites em Índices (Bins) e não em Hz
     // Resolução = Fs / N = 250 / 1024 = 0.244 Hz por bin
     
-    float resolution = (float)(1e6 / FAST_ACQ_US) / MAX_FFT_BUF_SIZE;
+    float resolution = (float)(1e6 / fast_acq_us) / max_fft_buf_size;
     
     // Definir zona de interesse: 40 BPM (0.66 Hz) a 220 BPM (3.66 Hz)
     int minIdx = (int)(0.66 / resolution); 
@@ -150,9 +196,10 @@ float bpmFunc(float * rawBuffer){
 void setup() {
   Serial.begin(115200);
 
-  queue_init(&sampleQueue, sizeof(uint16_t), MAX_TIMESAMPLE_BUF_SIZE);
+  queue_init(&sampleQueue, sizeof(uint16_t), max_timesample_buf_size);
   lastActivityTime = millis();
 
+  setupHistoryBuffer();
   setupFFTResources();
 
   multicore_launch_core1(core1_entry);
@@ -164,7 +211,7 @@ void loop() {
   uint32_t currentMillis = millis();
   uint32_t currentMicros = micros();
 
-  uint32_t intervalMicros = (systemState == ACTIVE) ? FAST_ACQ_US : SLEEP_ACQ_US;
+  uint32_t intervalMicros = (systemState == ACTIVE) ? fast_acq_us : sleep_acq_us;
 
   static uint32_t lastSampleMicros = 0;
 
@@ -185,7 +232,7 @@ void loop() {
   }
 
   if (systemState == ACTIVE){
-    if (millis() - lastActivityTime > IDLE_TIMEOUT){
+    if (millis() - lastActivityTime > idle_timeout_ms){
       Serial.println("Entering idle status...");
       systemState = IDLE;
     }
