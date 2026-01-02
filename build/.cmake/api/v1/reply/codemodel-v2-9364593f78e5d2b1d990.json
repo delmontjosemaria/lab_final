@@ -1,0 +1,75 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-2210e1a6edf6c2864858.json",
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Project",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "mosquitto_pub::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mosquitto_pub-Debug-dd3d9b779506daa44115.json",
+					"name" : "mosquitto_pub",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mosquitto_rr::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mosquitto_rr-Debug-5b4c97d28db2d7e3d0f4.json",
+					"name" : "mosquitto_rr",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "mosquitto_sub::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mosquitto_sub-Debug-3545b5660c776e94ecb3.json",
+					"name" : "mosquitto_sub",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/denpo/OneDrive/\u00c1rea de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+		"source" : "C:/Users/denpo/OneDrive/\u00c1rea de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

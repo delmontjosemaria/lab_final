@@ -1,0 +1,80 @@
+[
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_pub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_pub.dir\\pub_client.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\pub_client.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/pub_client.c",
+  "output": "CMakeFiles/mosquitto_pub.dir/pub_client.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_pub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_pub.dir\\pub_shared.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\pub_shared.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/pub_shared.c",
+  "output": "CMakeFiles/mosquitto_pub.dir/pub_shared.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_pub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_pub.dir\\client_shared.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_shared.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_shared.c",
+  "output": "CMakeFiles/mosquitto_pub.dir/client_shared.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_pub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_pub.dir\\client_props.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_props.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_props.c",
+  "output": "CMakeFiles/mosquitto_pub.dir/client_props.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_sub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_sub.dir\\sub_client.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\sub_client.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/sub_client.c",
+  "output": "CMakeFiles/mosquitto_sub.dir/sub_client.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_sub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_sub.dir\\sub_client_output.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\sub_client_output.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/sub_client_output.c",
+  "output": "CMakeFiles/mosquitto_sub.dir/sub_client_output.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_sub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_sub.dir\\client_shared.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_shared.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_shared.c",
+  "output": "CMakeFiles/mosquitto_sub.dir/client_shared.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_sub.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_sub.dir\\client_props.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_props.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_props.c",
+  "output": "CMakeFiles/mosquitto_sub.dir/client_props.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_rr.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_rr.dir\\rr_client.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\rr_client.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/rr_client.c",
+  "output": "CMakeFiles/mosquitto_rr.dir/rr_client.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_rr.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_rr.dir\\pub_shared.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\pub_shared.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/pub_shared.c",
+  "output": "CMakeFiles/mosquitto_rr.dir/pub_shared.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_rr.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_rr.dir\\sub_client_output.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\sub_client_output.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/sub_client_output.c",
+  "output": "CMakeFiles/mosquitto_rr.dir/sub_client_output.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_rr.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_rr.dir\\client_shared.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_shared.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_shared.c",
+  "output": "CMakeFiles/mosquitto_rr.dir/client_shared.obj"
+},
+{
+  "directory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\gcc.exe  @CMakeFiles/mosquitto_rr.dir/includes_C.rsp -g -o CMakeFiles\\mosquitto_rr.dir\\client_props.obj -c \"C:\\Users\\denpo\\OneDrive\\Área de Trabalho\\FCT\\MEEC\\1ano\\1semestre\\EMS\\Lab1_2\\lab_final\\ecg_project\\lib\\mosquitto\\client\\client_props.c\"",
+  "file": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client/client_props.c",
+  "output": "CMakeFiles/mosquitto_rr.dir/client_props.obj"
+}
+]

@@ -1,12 +1,11 @@
 #include <Arduino.h>
-#include <ringBuffer.h>
-#include <kiss_fftr.h>
-#include <multicore.h>
-#include <queue.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include "pico/util/queue.h"
+#include <pico/multicore.h>
+#include <hardware/adc.h>
+#include "kiss_fftr.h"
 #include <math.h>
-#include <time.h>
-#include <timer.h>
-#include <mosquitto.h>
 
 const uint32_t fast_acq_us = 4000;
 const uint32_t sleep_acq_us = 1000000;
@@ -15,6 +14,11 @@ const int numTaps = 51;
 const int adc_threshold_high = 2098; //ajustável
 const int max_timesample_buf_size = 1000;
 const int max_fft_buf_size = 1024;
+const char* ssid = "NOS-DDC6-5"; //deve ajustar para a rede atual
+const char* pass = "UKL5EQNJ"; //deve ajustar para a rede atual
+const char* topic = "ems/t10/g10";
+const char* mqttBroker = "localhost";
+const int mqttPort = 1883;
 
 #define ADC_PIN 26
 
@@ -55,6 +59,9 @@ kiss_fft_cpx fftOut[max_fft_buf_size/2 + 1];
 float fftIn[max_fft_buf_size];
 float winFunc[max_fft_buf_size];
 
+WiFiClient ecgClient;
+PubSubClient client(ecgClient);
+
 //Filtro FIR Notch em 50Hz e LowPass em 100Hz. A partir de 125 haveria aliasing, ja
 //que a frequencia de amostragem do sinal e de 250Hz. 
 float filterCoefs[] = {-1.89763279e-02, -1.40017703e-04,  1.05195952e-02,  2.10976657e-02,
@@ -71,6 +78,17 @@ float filterCoefs[] = {-1.89763279e-02, -1.40017703e-04,  1.05195952e-02,  2.109
        -2.49117352e-03, -2.84087742e-02, -8.65483612e-03,  2.10976657e-02,
         1.05195952e-02, -1.40017703e-04, -1.89763279e-02};
 
+void resetActivity();
+void core1_entry();
+float applyFilter(float newSample);
+void setupWiFi();
+void reconnectMQTT();
+void setupFFTResources();
+void setupHistoryBuffer();
+void circularWrite(uint16_t value);
+void publishBPM(float bpm);
+float bpmFunc(float * rawBuffer);
+
 void resetActivity(){
   noInterrupts();
   lastActivityTime = millis();
@@ -85,12 +103,12 @@ void core1_entry(){
     queue_remove_blocking(&sampleQueue, &rawSample);
     if (systemState == ACTIVE){
       filteredSample = applyFilter(rawSample);
-      //envia a amostra para o pc por serial
+      Serial.print(filteredSample);
       fftBuffer[fftBufferIdx++] = filteredSample;
       if (fftBufferIdx >= max_fft_buf_size){
         //calcula a fft e guarda em fft
         bpm = bpmFunc(fftBuffer);
-        //mqtt_publish(vitalsData/bpm, bpm);
+        publishBPM(bpm);
         fftBufferIdx = 0;
       }
     }
@@ -115,6 +133,35 @@ float applyFilter(float newSample){
   }
 
   return output;
+}
+
+void setupWiFi() {
+  Serial.print("Conectando ao WiFi");
+  WiFi.begin(ssid, pass);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nWiFi conectado.");
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void reconnectMQTT(){
+  while(!client.connected()){
+    Serial.println("Conectando ao MQTT..."); 
+
+    if(client.connect("ecgClient"))
+      Serial.println("Conectado!");
+    else{
+      Serial.println("Falhou, rc=");
+      Serial.print(client.state());
+      Serial.println("A tentar novamente em 5 segundos...");
+      delay(5000);
+    }
+  }
 }
 
 void setupFFTResources(){
@@ -142,6 +189,19 @@ void circularWrite(uint16_t value){
 
     if (historyBuffer.size < historyBuffer.capacity)
         historyBuffer.size++;
+}
+
+void publishBPM(float bpm){
+  if(!client.connected())
+    reconnectMQTT();
+
+  char msg[100];
+  snprintf(msg, sizeof(msg), "vitals,samplingRate=250,source=pico2w,devs:delpinho bpm=.2f", bpm);
+
+  if(client.publish(topic, msg))
+    Serial.println("Publicado com sucesso");
+  else
+    Serial.println("Falha ao publicar");
 }
 
 float bpmFunc(float * rawBuffer){
@@ -195,6 +255,9 @@ float bpmFunc(float * rawBuffer){
 void setup() {
   Serial.begin(115200);
 
+  setupWiFi();
+  client.setServer(mqttBroker, mqttPort);
+
   queue_init(&sampleQueue, sizeof(uint16_t), max_timesample_buf_size);
   lastActivityTime = millis();
 
@@ -220,6 +283,11 @@ void loop() {
 
     queue_try_add(&sampleQueue, &sample);
   }
+
+  if(!client.connected())
+    reconnectMQTT();
+
+  client.loop();
 
   if (Serial.available()){
     char c = Serial.read();

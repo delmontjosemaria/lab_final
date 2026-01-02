@@ -4,5 +4,6 @@
         "reportMissingModuleSource": "none",
         "reportShadowedImports": "none"
     },
-    "circuitpython.board.version": null
+    "circuitpython.board.version": null,
+    "cmake.sourceDirectory": "C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/ecg_project/lib/mosquitto/client"
 }

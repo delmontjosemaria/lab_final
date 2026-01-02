@@ -1,0 +1,9 @@
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/mosquitto_pub.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/mosquitto_sub.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/mosquitto_rr.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/edit_cache.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/rebuild_cache.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/list_install_components.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/install.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/install/local.dir
+C:/Users/denpo/OneDrive/Área de Trabalho/FCT/MEEC/1ano/1semestre/EMS/Lab1_2/lab_final/build/CMakeFiles/install/strip.dir
