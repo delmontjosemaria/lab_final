@@ -38,9 +38,9 @@ class ElectricCardiogramGUI:
         self.fs = fs  # Frequência de amostragem
 
         self.detector = pt.PanTompkinsDetector(self.fs)
+        self.isCalibrating = False
         self.timeSinceLastQRS = 0
         self.createInterfaceElements()
-        self.updateReadings()
         
     def createInterfaceElements(self):
         #Cria os elementos da interface
@@ -62,7 +62,7 @@ class ElectricCardiogramGUI:
         cardiogramFrame = ttk.LabelFrame(self.root, text="Eletrocardiograma (ECG)", padding=20)
         cardiogramFrame.pack(fill="both", expand=True, padx=15, pady=15)
         
-        self.createElectrocardiogramDisplay(cardiogramFrame, "Electrocardiograma", 0, "ecg", "5A5A5A")
+        self.createElectrocardiogramDisplay(cardiogramFrame, "Electrocardiograma", 0, "ecg", "#5A5A5A")
         
     def createElectrocardiogramDisplay(self, parent, label, row, key, color):
         #"""Cria um display dos pulsos cardiacos"""
@@ -214,7 +214,7 @@ class ElectricCardiogramGUI:
             print(f"SDNN (HRV):       {stats['sdnn']:.1f} ms")
             print(f"RMSSD (HRV):      {stats['rmssd']:.1f} ms")
             print(f"Total de QRS:     {len(self.detector.qrs_peaks)}")
-            print("="*50)
+            print("\n")
     
     def plotRealTime(self):
         """
@@ -298,16 +298,23 @@ class ElectricCardiogramGUI:
         
     def beepOnQRS(self):
         """Emite um beep ao detectar QRS"""
+        count = 0
+        if self.serialConnection is None:
+            return
         if (time.time() - self.timeSinceLastQRS) > MIN_THRESHOLD_BEEP:
             print("\a")  
             while (time.time() - self.timeSinceLastQRS) > HEART_RATE_TIMEOUT:
                 print("\a")  #Beep simples (pode não funcionar em todos os sistemas)
+                if count % 20 == 0:
+                    print("PACIENTE SEM PULSO! PREPARAR DESFIBRILADOR!")
+                    count += 1
+                time.sleep(0.01) #descanso para evitar flood de beeps
 
-
+        
 def main():
     root = tk.Tk()
     app = ElectricCardiogramGUI(root)
-    threading.Thread(target=app.beepOnQRS(), daemon=True).start()
+    threading.Thread(target=app.beepOnQRS, daemon=True).start()
     root.mainloop()
 
 if __name__ == "__main__":

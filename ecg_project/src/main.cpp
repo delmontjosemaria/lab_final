@@ -6,6 +6,7 @@
 #include <hardware/adc.h>
 #include "kiss_fftr.h"
 #include <math.h>
+#include <credentials.h>
 
 const uint32_t fast_acq_us = 4000;
 const uint32_t sleep_acq_us = 1000000;
@@ -14,11 +15,7 @@ const int numTaps = 51;
 const int adc_threshold_high = 2098; //ajustável
 const int max_timesample_buf_size = 1000;
 const int max_fft_buf_size = 1024;
-const char* ssid = "NOS-DDC6-5"; //deve ajustar para a rede atual
-const char* pass = "UKL5EQNJ"; //deve ajustar para a rede atual
 const char* topic = "ems/t10/g10";
-const char* mqttBroker = "localhost";
-const int mqttPort = 1883;
 
 #define ADC_PIN 26
 
@@ -26,15 +23,15 @@ const int mqttPort = 1883;
 MQTT Broker subscription ID:
 -> ems/t10/g10
 Chosen bucket:
--> ecg_measurement
+-> ems_final_project/ecg_measurement
 Chosen measurement
--> heart_rate
+-> estHeartRate
 Chosen tags: 
 -> samplingRate, source, devs
 Chosen fields:
 -> BPM
 Syntax:
--> mosquitto_pub -t "ems/t10/g10" -m "vitals,samplingRate=250,source=pico2w,devs:delpinho bpm=x" (publicar uma mensagem para um broker)
+-> mosquitto_pub -t "ems/t10/g10" -m "estHeartRate,samplingRate=250,source=pico2w,devs:delpinho bpm=x" (publicar uma mensagem para um broker)
 -> mosquitto_sub -t "ems/t10/g10" (subscrever para um broker)
 */
 
@@ -56,6 +53,7 @@ float fftBuffer[max_fft_buf_size];
 int fftBufferIdx = 0;
 float bpm;
 kiss_fft_cpx fftOut[max_fft_buf_size/2 + 1];
+kiss_fftr_cfg cfg = kiss_fftr_alloc(max_fft_buf_size, 0, NULL, NULL);
 float fftIn[max_fft_buf_size];
 float winFunc[max_fft_buf_size];
 
@@ -122,14 +120,15 @@ void core1_entry(){
 }
 
 float applyFilter(float newSample){
-  float output = 0;
-  int historyBufferIdx = 0;
-  
-  circularWrite(newSample);
 
+  circularWrite(newSample);  
+  float output = 0;
+  int auxIdx;
+  int historyBufferIdx = (historyBuffer.tail - 1 + historyBuffer.capacity) % historyBuffer.capacity;
+  
   for (int i = 0; i < numTaps; i++){
-    historyBufferIdx = (historyBufferIdx - i + numTaps) % numTaps;
-    output += filterCoefs[i] * historyBuffer.buffer[historyBufferIdx];
+    auxIdx = (historyBufferIdx - i + numTaps) % numTaps;
+    output += filterCoefs[i] * (float)historyBuffer.buffer[auxIdx];
   }
 
   return output;
@@ -137,7 +136,7 @@ float applyFilter(float newSample){
 
 void setupWiFi() {
   Serial.print("Conectando ao WiFi");
-  WiFi.begin(ssid, pass);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -156,8 +155,8 @@ void reconnectMQTT(){
     if(client.connect("ecgClient"))
       Serial.println("Conectado!");
     else{
-      Serial.println("Falhou, rc=");
-      Serial.print(client.state());
+      Serial.print("Falhou, rc=");
+      Serial.println(client.state());
       Serial.println("A tentar novamente em 5 segundos...");
       delay(5000);
     }
@@ -196,7 +195,7 @@ void publishBPM(float bpm){
     reconnectMQTT();
 
   char msg[100];
-  snprintf(msg, sizeof(msg), "vitals,samplingRate=250,source=pico2w,devs:delpinho bpm=.2f", bpm);
+  snprintf(msg, sizeof(msg), "vitals,samplingRate=250,source=pico2w,devs:delpinho estBPM=%.2f", bpm);
 
   if(client.publish(topic, msg))
     Serial.println("Publicado com sucesso");
@@ -206,9 +205,8 @@ void publishBPM(float bpm){
 
 float bpmFunc(float * rawBuffer){
   float bpm;
-  kiss_fftr_cfg cfg = kiss_fftr_alloc(max_fft_buf_size, 0, NULL, NULL);
-
   float sum = 0;
+
   for (int i = 0; i < max_fft_buf_size; i++)
     sum += rawBuffer[i];
 
@@ -217,13 +215,11 @@ float bpmFunc(float * rawBuffer){
       // (Sinal - Média) * Janela
       fftIn[i] = (rawBuffer[i] - mean) * winFunc[i];
   }
-
     // Transforma 'fft_input' (tempo) em 'fft_output' (frequência complexa)
     kiss_fftr(cfg, fftIn, fftOut);
 
     // Precisamos definir os limites em Índices (Bins) e não em Hz
     // Resolução = Fs / N = 250 / 1024 = 0.244 Hz por bin
-    
     float resolution = (float)(1e6 / fast_acq_us) / max_fft_buf_size;
     
     // Definir zona de interesse: 40 BPM (0.66 Hz) a 220 BPM (3.66 Hz)
@@ -247,8 +243,7 @@ float bpmFunc(float * rawBuffer){
     }
 
     float frequency = peakIdx * resolution;
-    float bpm = frequency * 60.0f;
-    kiss_fftr_free(cfg);
+    bpm = frequency * 60.0f;
   return bpm;
 }
 
@@ -256,7 +251,7 @@ void setup() {
   Serial.begin(115200);
 
   setupWiFi();
-  client.setServer(mqttBroker, mqttPort);
+  client.setServer(MQTT_BROKER, MQTT_PORT);
 
   queue_init(&sampleQueue, sizeof(uint16_t), max_timesample_buf_size);
   lastActivityTime = millis();
@@ -269,8 +264,10 @@ void setup() {
 }
 
 void loop() {
+  /*
   static uint32_t lastSampleTime = 0;
   uint32_t currentMillis = millis();
+  */
   uint32_t currentMicros = micros();
 
   uint32_t intervalMicros = (systemState == ACTIVE) ? fast_acq_us : sleep_acq_us;
@@ -290,8 +287,7 @@ void loop() {
   client.loop();
 
   if (Serial.available()){
-    char c = Serial.read();
-    if (systemState == IDLE){
+    if (Serial.read() != -1 && systemState == IDLE){
       Serial.println("Activating...");
       systemState = ACTIVE;
     }
